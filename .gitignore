@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 conf/logs
+.idea/workspace.xml

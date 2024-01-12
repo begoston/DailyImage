@@ -47,19 +47,29 @@ class MainWidget(RelativeLayout):
             with open('data.json', 'r') as file:
                 data = json.load(file)
             if current_value != data['last_update']:
-                # ha nem egyenlo a legutobbi frissites datummal, frissul a last_update a maira, és frissul a daily_img
+                # ha nem egyenlo a legutobbi frissites datummal, frissul a last_update a maira
                 data['last_update'] = datetime.datetime.now().day
+                with open('data.json', 'w') as file:
+                    json.dump(data, file, indent=2)
+
+        def upgrade_img_data():
+            with open('data.json', 'r') as file:
+                data = json.load(file)
+            if current_value != data['last_update']:
+                # ha nem egyenlo a legutobbi frissites datummal, frissul a daily_img
                 data['daily_img'] = daily_img
                 with open('data.json', 'w') as file:
                     json.dump(data, file, indent=2)
 
         check_data()
-        upgrade_data()
+        upgrade_img_data()
 
         with open('data.json', 'r') as file:
             data = json.load(file)
 
         img = Image(source=imgfolder + data['daily_img'] + extension, size_hint=(0.8, 0.8), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.add_widget(img)
+
         cover = Image(source='images/Cover.jpg', size_hint=(0.8, 0.8), pos_hint={'center_x': 0.5, 'center_y': 0.5}, color=(1,1,1,1))
         anim = Animation(color=(1,1,1,0))
 
@@ -67,9 +77,12 @@ class MainWidget(RelativeLayout):
             anim.start(cover)
 
         bigbtn = Button(size_hint=(1, 1), background_color=(0,0,0,0), on_press=(start_animation))
-        self.add_widget(img)
-        self.add_widget(cover)
-        self.add_widget(bigbtn)
+
+
+        upgrade_data()
+        if current_value != data['last_update']:
+            self.add_widget(cover)
+            self.add_widget(bigbtn)
 
 
 
